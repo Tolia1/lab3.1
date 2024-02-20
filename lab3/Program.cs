@@ -1,7 +1,12 @@
+using lab3.Interfaces;
+using lab3.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<ICalculatorService, CalculatorService>();
+builder.Services.AddTransient<IDayStateService, DayStateService>();
 
 var app = builder.Build();
 
@@ -24,4 +29,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.Run(async context =>
+{
+    var timeService = app.Services.GetService<IDayStateService>();
+    await context.Response.WriteAsync($"It's {timeService?.GetDayState()} now");
+});
 app.Run();
